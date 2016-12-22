@@ -20,8 +20,8 @@
 # - t or s has special characters (numbers or symbols)
 # - input t or s as None
 # - input s ="udacity", t = "ad" (valid case)
-# - s = "aaaaa", t = "aa"
-# - s = "Tom Marvolo Riddle", t = "I am Lord Voldemort" (Multi-word string)
+# - s = 'udacity', t = 'uy' - Invalid anagram. Not in dictionary
+# - s = 'udacity', t = 'a' - Single character input in t
 #
 # Brainstorming:
 # - Search each character in t wrt s
@@ -31,13 +31,15 @@
 # - O(n)
 
 
-# In[130]:
+# In[10]:
 
 # References: 
 # https://pymotw.com/2/collections/counter.html
 # http://stackoverflow.com/questions/8270092/python-remove-all-whitespace-in-a-string
 # http://pythex.org/
-
+# http://www.velvetcache.org/2010/03/01/looking-up-words-in-a-dictionary-using-python
+# http://stackoverflow.com/questions/3788870/how-to-check-if-a-word-is-an-english-word-with-python
+from nltk.corpus import wordnet
 from collections import Counter
 import re
 
@@ -45,6 +47,10 @@ def question1(s, t):
     
     # Check for None input
     if s == None or t == None:
+        return False
+    
+    # Check for single-character in input t
+    if len(t) <= 1:
         return False
     
     # Check for special characters (numbers, symbols).
@@ -61,15 +67,16 @@ def question1(s, t):
     d = Counter(t)
     
     ##print c, d
-
+    
     # Finds intersection of Counter c and d (taking positive minimums) and compares if it still appears in d.
-    if c & d == d: 
+    # Checks for a valid anagram against WordNet from NLTK
+    if c & d == d and wordnet.synsets(t):
         return True
     else:
         return False
 
 
-# In[131]:
+# In[11]:
 
 print "============== Question 1 ================"
 # t does not contain characters found in s
@@ -88,17 +95,17 @@ print "Test Case 3 -", question1("uda%city3", "a3")
 # Should be False
 print "Test Case 4 -", question1("udacity", None)
 
+# s = 'udacity', t = 'a' - Single character input in t
+# Should be False
+print "Test Case 5 -", question1("udacity", "a")
+
+# s = 'udacity', t = 'uy' - Invalid anagram. Not in dictionary
+# Should be False
+print "Test Case 6 -", question1("udacity", "uy")
+
 # input s ='udacity', t = 'ad' (valid case)
 # Should be True
-print "Test Case 5 -", question1("udacity", "ad")
-
-# s = 'aaaaa', t = 'aa'
-# Should be True
-print "Test Case 6 -", question1("aaaaa", "aa")
-
-# s = 'Tom Marvolo Riddle', t = 'I am Lord Voldemort' (Multi-word string)
-# Should be True
-print "Test Case 7 -", question1("Tom Marvolo Riddle", "I am Lord Voldemort")
+print "Test Case 7 -", question1("udacity", "ad")
 
 
 # In[ ]:
@@ -128,7 +135,7 @@ print "Test Case 7 -", question1("Tom Marvolo Riddle", "I am Lord Voldemort")
 # - If palindrome is found, store in memory and search two characters adjacent, three, etc until no more palindrome
 #
 # Runtime:
-# - O(2n)
+# - O(n^2)
 
 
 # In[11]:
@@ -136,6 +143,7 @@ print "Test Case 7 -", question1("Tom Marvolo Riddle", "I am Lord Voldemort")
 # Reference:
 # http://stackoverflow.com/questions/17331290/how-to-check-for-palindrome-using-python-logic
 # http://stackoverflow.com/questions/16343849/python-returning-longest-strings-from-list
+# http://pythex.org/
 import re
 
 def question2(a):
@@ -431,7 +439,7 @@ Tree representation
 # - O(n)
 
 
-# In[61]:
+# In[28]:
 
 # Reference:
 # http://blog.rdtr.net/post/algorithm/algorithm_tree_lowest_common_ancestor_of_a_binary_tree/
@@ -450,8 +458,8 @@ M tree visualization
     3
    / \
   0   4
- /
-1 
+   \
+    1 
 '''
 
 # Invalid tree with values other than 0 or 1
@@ -478,7 +486,7 @@ K tree visualization
 0   1 3   6
 '''
 
-
+'''
 # Lowest Common Ancestor
 def question4(T, r, n1, n2):
     # Handle None input
@@ -523,6 +531,43 @@ def question4(T, r, n1, n2):
         current = node_parent_map[current]
     # When the node n2 exists in path, return it since it is the LCA
     return current
+'''
+
+# Lowest Common Ancestor
+def question4(T, r, n1, n2):
+    # Handle None input
+    if T == None or r == None or n1 == None or n2 == None:
+        return "None input entered."
+    
+    # Construct dict of {node: parent}
+    node_parent_map = {}
+    for i in range(len(T)):
+        for j in range(len(T)):
+            # Handle invalid matrix
+            if T[i][j] < 0 or T[i][j] > 1:
+                return "Invalid matrix entered."
+            # Add key:value pair if a node-parent relationship exists
+            # T[i][j] == 1, where i is an ancestor to j
+            elif T[i][j] == 1:
+                node_parent_map[j] = i
+    print node_parent_map
+
+    # Traverse tree from root node
+    # Get child nodes from root
+    temp = {}
+    for node, parent in node_parent_map.iteritems():
+        if parent == r:
+            temp[node] = parent
+    print temp
+    for node, parent in temp.iteritems():
+        #if n1 <= node and n2 <= node:
+        
+        print "node", node
+        print "1", n1 <= node
+        print "2", n2 <= node
+        # then search correct key
+            
+print question4(K, 4, 0, 1)
 
 
 # In[54]:

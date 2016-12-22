@@ -1,7 +1,8 @@
 Question 1:
 Assumptions:
-- An anagram is valid even if it is not defined in an English dictionary. For example, "aaa" is treated as a valid anagram of "aaaaaa".
-- Any input with special characters is not a valid anagram or string. However, whitespaces are allowed.
+- An anagram is valid only from the English dictionary. The dictionary corpus used is from WordNet. Names of people for example, are not valid anagrams in this case.
+- Any input with special characters or numbers is not a valid anagram or string.
+- Multi-word/sentence anagrams are not allowed. Only single word inputs are allowed.
 
 Data Structures:
 - The Python Counter subclass from the collections module is used. Counter is basically comprised of a Python dictionary data structure of a set of unordered key-value pairs of data. 
@@ -45,7 +46,7 @@ Data Structure:
 
 Efficiency:
 - The algorithm finds palindromes iteratively over string "a", then for each character in "a", the algorithm finds the valid palindromes recursively, increasing the window spread of adjacent characters to the left and right.
-- This needs to run twice, once to find odd palindromes and twice to find even palindromes. Thus, the runtime is O(2n), where we need to iterate over string "a" twice.
+- This needs to run twice, once to find odd palindromes and twice to find even palindromes. Thus, the runtime is O(n^2), where we need to iterate over string "a" twice.
 - Space efficiency: Stores list of palindromes, and stores recursion of window spans in temporary memory. This expands as the string "a" is longer. Thus, it is O(n).
 
 
