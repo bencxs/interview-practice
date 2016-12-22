@@ -72,12 +72,13 @@ Assumptions:
 - The tree itself adheres to all BST properties
 
 Data Structure:
-- A Python dictionary is created to map the relationship of a particular node to its parent node in a tree. By doing this, we are able to retrieve the parent of a node easily for traversal up the tree.
-- Another list is created to store the path of traversal from the specified node, n1, to the specified root, r, of the tree. This list is then used to compare the traversal path of node n2 against n1. the Least Common Ancestor (LCA) is found when the highest node in the tree exists in the path for both n1 and n2.
+- A Python dictionary is created to map the relationship of a particular node to its parent node in a tree. By doing this, we are able to retrieve the parent of a node easily for traversal down the tree.
+- The main logic checks if the nodes n1 and n2 are larger than or smaller than the root node. By adhering to Binary Search Tree properties, all child nodes to the right of the parent node has a larger value than the parent, while all child nodes to the left have smaller values than the parent.
+- When traversing down the tree, the algorithm checks for the appriopriate tree branch to search deeper based on this BST property.
 
 Efficiency:
-- The node-parent map needs only to be iterated over once, when building the path from node n1 to the root. Then, for node n2, the node is compared against the path list only once, until the LCA is found in the path. This eliminates having to iterate over the node-parent map for a second time for node n2. Thus, the time complexity is maintained at linear time O(n). 
-- Space increases linearly with increasing tree depth, O(n), as an increase in tree depth requires more key-value pairs of node-to-parent relationships.
+- The node-parent map needs only to be iterated over once, when building the path from the matrix. Then, when traversing down the tree, it is done only once as the target nodes (n1, n2) are checked while traversing until a LCA is found. If the target nodes are on one half of the tree, then the algorithm will only search for the correct half. One level down the node, the algorithm will split its search into half again. Thus, the time complexity is maintained at log time O(log n). 
+- Space increases with increasing tree depth to store the key-value pairs of node-parent relationships, but no additional copies of the dictionary is required when traversing down the tree, thus, the space complexity can be approximated to constant time O(1).
 
 Question 5:
 Assumptions:

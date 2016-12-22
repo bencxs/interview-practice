@@ -426,9 +426,8 @@ Tree representation
 # Test cases:
 # - input is None
 # - input is not a valid matrix
-# - input has a least common ancestor
 # - input has no LCA
-# - input has LCA other than at root level
+# - input has LCA
 #
 # Brainstorming:
 # - Create BST from matrix, via insertion
@@ -436,31 +435,16 @@ Tree representation
 # - 
 #
 # Runtime:
-# - O(n)
+# - O(1)
 
 
-# In[28]:
+# In[1]:
 
 # Reference:
 # http://blog.rdtr.net/post/algorithm/algorithm_tree_lowest_common_ancestor_of_a_binary_tree/
 # http://www.ritambhara.in/build-binary-tree-from-ancestor-matrics/
 # http://yucoding.blogspot.my/2016/04/leetcode-question-lowest-common.html
 # http://www.geeksforgeeks.org/lowest-common-ancestor-binary-tree-set-1/
-
-M = [[0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0],
-    [1, 0, 0, 0, 1],
-    [0, 0, 0, 0, 0]]
-
-'''
-M tree visualization
-    3
-   / \
-  0   4
-   \
-    1 
-'''
 
 # Invalid tree with values other than 0 or 1
 J = [[0, 1, 0, 0, -1],
@@ -469,68 +453,22 @@ J = [[0, 1, 0, 0, -1],
     [1, 0, 0, 0, 0],
     [0, 0, 0, 0, 2]]
 
+# Balanced tree
 K = [[0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0],
     [1, 1, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
     [0, 0, 1, 0, 0, 1, 0],
-    [0, 0, 0, 1, 0, 0, 1],
+    [0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 1],
     [0, 0, 0, 0, 0, 0, 0]]
 
 '''
 K tree visualization
-     4
+     3
    /   \
   2     5
  / \   / \
-0   1 3   6
-'''
-
-'''
-# Lowest Common Ancestor
-def question4(T, r, n1, n2):
-    # Handle None input
-    if T == None or r == None or n1 == None or n2 == None:
-        return "None input entered."
-    
-    # Construct dict of {node: parent}
-    node_parent_map = {}
-    for i in range(len(T)):
-        for j in range(len(T)):
-            # Handle invalid matrix
-            if T[i][j] < 0 or T[i][j] > 1:
-                return "Invalid matrix entered."
-            # Add key:value pair if a node-parent relationship exists
-            # T[i][j] == 1, where i is an ancestor to j
-            elif T[i][j] == 1:
-                node_parent_map[j] = i
-
-    # Initialize path from node to root
-    path = []
-    # Initialize current node n1
-    current = n1
-    # Traverse and add nodes to path until we reach the root
-    while current in node_parent_map:
-        # Add node to path
-        path.append(current)
-        # Switch to next node in path
-        current = node_parent_map[current]
-    # Add root as the last node in path
-    if current == r:
-        path.append(current)
-    # Handle no LCA case
-    else:
-        return "No LCA found with specified root."
-        
-    # Find first common node for n1 and n2 in path
-    # Initialize node n2
-    current = n2
-    # Keep running check for node n2 to exist in path
-    while current not in path:
-        # Traverse up the tree to the node's parent
-        current = node_parent_map[current]
-    # When the node n2 exists in path, return it since it is the LCA
-    return current
+0   1 4   6
 '''
 
 # Lowest Common Ancestor
@@ -550,27 +488,61 @@ def question4(T, r, n1, n2):
             # T[i][j] == 1, where i is an ancestor to j
             elif T[i][j] == 1:
                 node_parent_map[j] = i
-    print node_parent_map
+    
+    # Helper to find child nodes in a BST
+    def find_child_node(node_parent_map, current):
+        temp = []
+        for node, parent in node_parent_map.iteritems():
+            if parent == current:
+                temp.append((node, parent))
+        return temp
 
     # Traverse tree from root node
-    # Get child nodes from root
-    temp = {}
-    for node, parent in node_parent_map.iteritems():
-        if parent == r:
-            temp[node] = parent
-    print temp
-    for node, parent in temp.iteritems():
-        #if n1 <= node and n2 <= node:
-        
-        print "node", node
-        print "1", n1 <= node
-        print "2", n2 <= node
-        # then search correct key
-            
-print question4(K, 4, 0, 1)
+    # Initialize current node as the root node 
+    # and two null variables (nt1, nt2) as checks for the respective target nodes (n1, n2)
+    current = r
+    nt1 = None
+    nt2 = None
+    # While the checks are not equal to the target nodes
+    while nt1 != n1 and nt2 != n2:
+        # Returns LCA when the target nodes are in both left and right subtrees
+        if n1 < current and n2 > current:
+            nt1 = n1
+            nt2 = n2
+            return current
+        # If the target nodes are in the left subtree...
+        elif n1 < current and n2 < current:
+            # Finds all child nodes of the current node
+            temp = find_child_node(node_parent_map, current)
+            # Check if LCA is found
+            if len(temp) == 0:
+                return "No LCA found within specified root."
+            elif temp[0][0] == n1 and temp[1][0] == n2:
+                nt1 = n1
+                nt2 = n2
+                return current
+            else:
+                # Assigns current node to left child node
+                current = temp[0][0]
+        # If the target nodes are in the right subtree...
+        elif n1 > current and n2 > current:
+            # Finds all child nodes of the current node
+            temp = find_child_node(node_parent_map, current)
+            # Check if LCA is found
+            if len(temp) == 0:
+                return "No LCA found within specified root."
+            elif temp[0][0] == n1 and temp[1][0] == n2:
+                nt1 = n1
+                nt2 = n2
+                return current
+            else:
+                # Assigns current node to right child node
+                current = temp[1][0]
+        else:
+            return None
 
 
-# In[54]:
+# In[2]:
 
 print "============== Question 4 ================"
 # input is None
@@ -581,17 +553,13 @@ print "Test Case 1 -", question4(None, 3, 1, 4)
 # Should be "Invalid matrix entered."
 print "Test Case 2 -", question4(J, 3, 1, 4)
 
-# input has a Least Common Ancestor
-# Should be "3"
-print "Test Case 3 -", question4(M, 3, 1, 4)
-
-# input has no Least Common Ancestor
+# input has no LCA
 # Should be "No LCA found with specified root."
-print "Test Case 4 -", question4(M, 0, 1, 4)
+print "Test Case 3 -", question4(K, 6, 1, 4)
 
-# input has LCA other than at root level
-# Should be "5"
-print "Test Case 5 -", question4(K, 4, 3, 6)
+# input has a LCA
+# Should be "2"
+print "Test Case 4 -", question4(K, 3, 0, 1)
 
 
 # In[ ]:
