@@ -8,6 +8,4 @@ Answers to the interview questions are found in:
 
 `explanation.txt` - Reasoning of algorithm and data structure choices
 
-## Work In Progress Items
-
-`ml_interview_practice.docx` - Answers to ML Interview questions.
+`ml_interview_practice.pdf` - Answers to ML Interview questions.
